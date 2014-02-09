@@ -8,7 +8,14 @@ class UsersController < ApplicationController
 	end
 
   	def new
-  		@user = User.new
+  	
+  		if signed_in?
+  			flash[:success] = "You Are Already Signed In"
+  			redirect_to(root_url)
+  		else 	
+  			@user = User.new
+  		end
+
   	end
 
 	def destroy
@@ -38,13 +45,20 @@ class UsersController < ApplicationController
 
 
   	def create
-		@user = User.new(user_params) # Not the final implementation!
-		if @user.save
-			sign_in @user
-			flash[:success] = "Welcome to the Sample App!"
-			redirect_to @user
-		else
-			render 'new'
+
+  		if signed_in?
+  			flash[:success] = "You Are Already Signed In"
+  			redirect_to(root_url)
+  		else 
+
+			@user = User.new(user_params) # Not the final implementation!
+			if @user.save
+				sign_in @user
+				flash[:success] = "Welcome to the Sample App!"
+				redirect_to @user
+			else
+				render 'new'
+			end
 		end
 	end
 
